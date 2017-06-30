@@ -1,9 +1,10 @@
 {
   "name": "webpack-csp-plugin",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "",
   "main": "src/index.js",
   "dependencies": {
+    "acorn": "^5.0.3",
     "csp-header": "^1.0.1",
     "parse5": "^3.0.2",
     "webpack": "^3.0.0"

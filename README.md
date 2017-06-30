@@ -1,6 +1,6 @@
 ## Webpack CSP Plugin
 
-This plugin generates a CSP header from your webpack build
+This plugin generates a CSP header from your webpack build.
 
 ```js
 new WebpackCspPlugin({

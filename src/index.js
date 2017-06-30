@@ -15,7 +15,7 @@ class WebpackCspPlugin {
       'script-src': options.scriptSRC || [],
       'style-src': options.styleSRC || [],
       'img-src': options.imageSRC || [],
-      'worker-src': options.workerSRC || [csp.SELF],
+      'worker-src': options.workerSRC || [],
     };
   }
   apply(compiler) {
@@ -23,12 +23,13 @@ class WebpackCspPlugin {
       for (const [name, value] of Object.entries(compilation.assets)) {
         if (!name.endsWith('.html')) continue;
         const ast = parse5.parseFragment(value.source());
-        (function repeat(obj) {
+        (function walk(obj) {
           if (!obj.childNodes) return;
           for (const node of obj.childNodes) {
             switch (node.nodeName) {
               case 'script':
                 handlers.script({ node, csp: this.csp['script-src'], options: this.options });
+                handlers.worker({ node, csp: this.csp['worker-src'], options: this.options });
                 break;
               case 'link':
                 handlers.style({ node, csp: this.csp['style-src'], options: this.options });
@@ -39,6 +40,7 @@ class WebpackCspPlugin {
               default:
                 break;
             }
+            walk(node);
           }
         }.bind(this)(ast));
       }

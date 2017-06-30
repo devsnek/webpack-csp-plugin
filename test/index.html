@@ -7,7 +7,12 @@
   <link rel=stylesheet href=https://s.gus.host/fira/FiraCode.css />
 <body>
   <div id=app></div>
-  <script>console.log('INLINE SCRIPT!')</script>
+  <script>
+  console.log('INLINE SCRIPT!')
+  new Worker('data:application/javascript,...');
+  new SharedWorker('https://example.com/');
+  navigator.serviceWorker.register('https://example.com/sw.js');
+  </script>
   <img src=https://s.gus.host/o-SNAKES.jpg></img>
 </body>
 </html>
