@@ -15,6 +15,7 @@ class WebpackCspPlugin {
       'script-src': options.scriptSRC || [],
       'style-src': options.styleSRC || [],
       'img-src': options.imageSRC || [],
+      'worker-src': options.workerSRC || [csp.SELF],
     };
   }
   apply(compiler) {

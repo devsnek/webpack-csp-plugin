@@ -16,6 +16,6 @@ module.exports = function({ node, csp, options }) {
     let code = node.childNodes.find(n => n.nodeName === '#text');
     if (!code) return;
     const hash = crypto.createHash(options.hashType).update(code.value).digest('hex');
-    csp.push(hash);
+    csp.push(`'${options.hashType}-${hash}'`);
   }
 };
