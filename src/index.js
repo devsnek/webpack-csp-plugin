@@ -18,31 +18,12 @@ class WebpackCspPlugin {
       'worker-src': options.workerSRC || [],
     };
   }
+
   apply(compiler) {
     compiler.plugin('emit', (compilation, callback) => {
       for (const [name, value] of Object.entries(compilation.assets)) {
-        if (!name.endsWith('.html')) continue;
-        const ast = parse5.parseFragment(value.source());
-        (function walk(obj) {
-          if (!obj.childNodes) return;
-          for (const node of obj.childNodes) {
-            switch (node.nodeName) {
-              case 'script':
-                handlers.script({ node, csp: this.csp['script-src'], options: this.options });
-                handlers.worker({ node, csp: this.csp['worker-src'], options: this.options });
-                break;
-              case 'link':
-                handlers.style({ node, csp: this.csp['style-src'], options: this.options });
-                break;
-              case 'img':
-                handlers.image({ node, csp: this.csp['img-src'], options: this.options });
-                break;
-              default:
-                break;
-            }
-            walk(node);
-          }
-        }.bind(this)(ast));
+        if (name.endsWith('.html')) this.handleHTML(value);
+        else if (name.endsWith('.css')) this.handleCSS(value);
       }
 
       const output = this.options.output;
@@ -62,6 +43,34 @@ class WebpackCspPlugin {
 
       callback();
     });
+  }
+
+  handleHTML(value) {
+    const ast = parse5.parseFragment(value.source());
+    (function walk(obj) {
+      if (!obj.childNodes) return;
+      for (const node of obj.childNodes) {
+        switch (node.nodeName) {
+          case 'script':
+            handlers.script({ node, csp: this.csp['script-src'], options: this.options });
+            handlers.worker({ node, csp: this.csp['worker-src'], options: this.options });
+            break;
+          case 'link':
+            handlers.style({ node, csp: this.csp['style-src'], options: this.options });
+            break;
+          case 'img':
+            handlers.image({ node, csp: this.csp['img-src'], options: this.options });
+            break;
+          default:
+            break;
+        }
+        walk(node);
+      }
+    }.bind(this)(ast));
+  }
+
+  handleCSS(value) {
+    handlers.style({ src: value.source(), csp: this.csp['style-src'], options: this.options });
   }
 }
 
