@@ -21,15 +21,14 @@ module.exports = function({ node, csp, options }) {
     const raw = /^data:application\/javascript/.test(src);
     if (raw) {
       const hash = crypto.createHash(options.hashType).update(src).digest('hex');
-      const final = `'${options.hashType}-${hash}'`;
-      if (!csp.includes(final)) csp.push(final);
+      csp.add(`'${options.hashType}-${hash}'`);
     } else {
       const absolute = /^https?:\/\//i.test(src);
       if (absolute) {
-        const origin = new URL(src).host;
-        if (!csp.includes(origin)) csp.push(origin);
-      } else if (!csp.includes(CSP.SELF)) {
-        csp.push(CSP.SELF);
+        const origin = new URL(src).origin;
+        csp.add(origin);
+      } else {
+        csp.add(CSP.SELF);
       }
     }
   }

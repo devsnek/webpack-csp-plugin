@@ -11,11 +11,12 @@ class WebpackCspPlugin {
       reportURI: options.reportURI,
     };
     this.csp = {
-      'default-src': options.defaultSRC || [csp.SELF],
-      'script-src': options.scriptSRC || [],
-      'style-src': options.styleSRC || [],
-      'img-src': options.imageSRC || [],
-      'worker-src': options.workerSRC || [],
+      default: new Set(options.defaultSRC || [csp.SELF]),
+      script: new Set(options.scriptSRC || []),
+      style: new Set(options.styleSRC || []),
+      font: new Set(options.fontSRC || []),
+      img: new Set(options.imageSRC || []),
+      worker: new Set(options.workerSRC || []),
     };
   }
 
@@ -29,7 +30,12 @@ class WebpackCspPlugin {
       const output = this.options.output;
       if (!output) throw new Error('[CspPlugin] options.output must be provided');
       const header = csp({
-        policies: this.csp,
+        policies: Object.entries(this.csp)
+          .map(([name, value]) => [`${name}-src`, Array.from(value)])
+          .reduce((o, [name, value]) => {
+            o[name] = value;
+            return o;
+          }, {}),
         'report-uri': this.options.reportURI,
       });
       if (typeof output === 'function') {
@@ -52,14 +58,14 @@ class WebpackCspPlugin {
       for (const node of obj.childNodes) {
         switch (node.nodeName) {
           case 'script':
-            handlers.script({ node, csp: this.csp['script-src'], options: this.options });
-            handlers.worker({ node, csp: this.csp['worker-src'], options: this.options });
+            handlers.script({ node, csp: this.csp.script, options: this.options });
+            handlers.worker({ node, csp: this.csp.worker, options: this.options });
             break;
           case 'link':
-            handlers.style({ node, csp: this.csp['style-src'], options: this.options });
+            handlers.style({ node, csp: this.csp, options: this.options });
             break;
           case 'img':
-            handlers.image({ node, csp: this.csp['img-src'], options: this.options });
+            handlers.image({ node, csp: this.csp.img, options: this.options });
             break;
           default:
             break;
@@ -70,7 +76,7 @@ class WebpackCspPlugin {
   }
 
   handleCSS(value) {
-    handlers.style({ src: value.source(), csp: this.csp['style-src'], options: this.options });
+    handlers.style({ src: value.source(), csp: this.csp, options: this.options });
   }
 }
 

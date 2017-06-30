@@ -1,6 +1,13 @@
 @import url("https://google.com/meme.css");
 @import "https://google.com/meme2.css";
 
+@font-face {
+  font-family: MyHelvetica;
+  src: url(https://font.com/MgOpenModernaBold.ttf),
+       url(https://font.com/MgOpenModernaMeme.ttf);
+  font-weight: bold;
+}
+
 body {
   background-color: red;
 }
