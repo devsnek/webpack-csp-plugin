@@ -3,22 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "main": "src/index.js",
-  "directories": {
-    "test": "test"
-  },
   "dependencies": {
     "csp-header": "^1.0.1",
+    "parse5": "^3.0.2",
+    "webpack": "^3.0.0"
+  },
+  "devDependencies": {
     "css-loader": "^0.28.4",
     "extract-text-webpack-plugin": "^2.1.2",
     "html-webpack-plugin": "^2.29.0",
-    "parse5": "^3.0.2",
-    "style-loader": "^0.18.2",
-    "webpack": "^3.0.0"
+    "style-loader": "^0.18.2"
   },
-  "devDependencies": {},
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/devsnek/webpack-csp-plugin.git"
