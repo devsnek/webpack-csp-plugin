@@ -1,5 +1,3 @@
-const path = require('path');
-const fs = require('fs');
 const parse5 = require('parse5');
 const csp = require('csp-header');
 

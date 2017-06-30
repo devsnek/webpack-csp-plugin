@@ -14,7 +14,9 @@
     "html-webpack-plugin": "^2.29.0",
     "style-loader": "^0.18.2"
   },
-  "scripts": {},
+  "scripts": {
+    "lint": "eslint -c .eslintrc.json src"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/devsnek/webpack-csp-plugin.git"
