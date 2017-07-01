@@ -18,8 +18,7 @@ module.exports = function({ node, csp, options }) {
   }
 
   function finalize(src) {
-    const raw = /^data:application\/javascript/.test(src);
-    if (raw) {
+    if (/^data:application\/javascript/.test(src)) {
       const hash = crypto.createHash(options.hashType).update(src).digest('hex');
       csp.add(`'${options.hashType}-${hash}'`);
     } else {

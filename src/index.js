@@ -25,6 +25,7 @@ class WebpackCspPlugin {
       for (const [name, value] of Object.entries(compilation.assets)) {
         if (name.endsWith('.html')) this.handleHTML(value);
         else if (name.endsWith('.css')) this.handleCSS(value);
+        else if (name.endsWith('.js')) this.handleJS(value);
       }
 
       const output = this.options.output;
@@ -59,9 +60,14 @@ class WebpackCspPlugin {
         switch (node.nodeName) {
           case 'script':
             handlers.script({ node, csp: this.csp.script, options: this.options });
-            handlers.worker({ node, csp: this.csp.worker, options: this.options });
+            // handlers.worker({ node, csp: this.csp.worker, options: this.options });
             break;
-          case 'link':
+          case 'link': {
+            const rel = node.attrs.find(a => a.name === 'rel');
+            if (rel && rel.value === 'stylesheet') handlers.style({ node, csp: this.csp, options: this.options });
+            break;
+          }
+          case 'style':
             handlers.style({ node, csp: this.csp, options: this.options });
             break;
           case 'img':
@@ -76,7 +82,17 @@ class WebpackCspPlugin {
   }
 
   handleCSS(value) {
-    handlers.style({ src: value.source(), csp: this.csp, options: this.options });
+    handlers.style({ node: {
+      childNodes: [{ nodeName: '#text', value: value.source() }],
+      attrs: [],
+    }, csp: this.csp, options: this.options });
+  }
+
+  handleJS(value) {
+    handlers.script({ node: {
+      childNodes: [{ nodeName: '#text', value: value.source() }],
+      attrs: [],
+    }, csp: this.csp.script, options: this.options });
   }
 }
 
