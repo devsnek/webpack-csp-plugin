@@ -8,15 +8,15 @@ class WebpackCspPlugin {
     this.options = {
       hashType: options.hashType || 'sha256',
       output: options.output,
-      reportURI: options.reportURI,
+      reportUri: options.reportUri,
     };
     this.csp = {
-      default: new Set(options.defaultSRC || [csp.SELF]),
-      script: new Set(options.scriptSRC || []),
-      style: new Set(options.styleSRC || []),
-      font: new Set(options.fontSRC || []),
-      img: new Set(options.imageSRC || []),
-      worker: new Set(options.workerSRC || []),
+      default: new Set(options.defaults || [csp.SELF]),
+      script: new Set(options.scripts || []),
+      style: new Set(options.styles || []),
+      font: new Set(options.fonts || []),
+      img: new Set(options.images || []),
+      worker: new Set(options.workers || []),
     };
   }
 
@@ -37,7 +37,7 @@ class WebpackCspPlugin {
             o[name] = value;
             return o;
           }, {}),
-        'report-uri': this.options.reportURI,
+        'report-uri': this.options.reportUri,
       });
       if (typeof output === 'function') {
         output(header);

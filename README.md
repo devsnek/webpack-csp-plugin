@@ -10,7 +10,8 @@ complexity of how they can be mounted, so you will need to add those rules manua
 ```js
 new WebpackCspPlugin({
   output: 'csp_header.txt', // or `(header) => { ... }`
-  reportURI: 'https://example.com/cspreport', // if you have a csp reporting server
-  workerSRC: ['https://worker.io/sw.js'], // if you use workers (see above)
+  reportUri: 'https://example.com/cspreport', // if you have a csp reporting server
+  workers: ['https://worker.io/sw.js'], // if you use workers (see above)
+  // defaults, styles, scripts, fonts, etc.
 });
 ```
