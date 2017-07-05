@@ -29,6 +29,7 @@ module.exports = {
       output: 'csp_header.txt',
       reportURI: 'https://gus.host/cspreport',
     }),
+    new webpack.optimize.ModuleConcatenationPlugin(),
   ],
   module: {
     loaders: [
