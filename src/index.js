@@ -23,13 +23,17 @@ class WebpackCspPlugin {
   apply(compiler) {
     compiler.plugin('emit', (compilation, callback) => {
       for (const [name, value] of Object.entries(compilation.assets)) {
-        if (name.endsWith('.html')) this.handleHTML(value);
-        else if (name.endsWith('.css')) this.handleCSS(value);
-        else if (name.endsWith('.js')) this.handleJS(value);
+        if (/\.html$/.test(name))
+          this.handleHTML(value);
+        else if (/\.css$/.test(name))
+          this.handleCSS(value);
+        else if (/\.js$/.test(name))
+          this.handleJS(value);
       }
 
       const output = this.options.output;
-      if (!output) throw new Error('[CspPlugin] options.output must be provided');
+      if (!output)
+        throw new Error('[CSP Plugin] options.output must be provided');
       const header = csp({
         policies: Object.entries(this.csp)
           .map(([name, value]) => [`${name}-src`, Array.from(value)])
@@ -55,7 +59,8 @@ class WebpackCspPlugin {
   handleHTML(value) {
     const ast = parse5.parseFragment(value.source());
     (function walk(obj) {
-      if (!obj.childNodes) return;
+      if (!obj.childNodes)
+        return;
       for (const node of obj.childNodes) {
         switch (node.nodeName) {
           case 'script':
@@ -63,8 +68,9 @@ class WebpackCspPlugin {
             // handlers.worker({ node, csp: this.csp.worker, options: this.options });
             break;
           case 'link': {
-            const rel = node.attrs.find(a => a.name === 'rel');
-            if (rel && rel.value === 'stylesheet') handlers.style({ node, csp: this.csp, options: this.options });
+            const rel = node.attrs.find((a) => a.name === 'rel');
+            if (rel && rel.value === 'stylesheet')
+              handlers.style({ node, csp: this.csp, options: this.options });
             break;
           }
           case 'style':

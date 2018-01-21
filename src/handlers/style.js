@@ -3,13 +3,24 @@ const { URL } = require('url');
 const CSP = require('csp-header');
 const css = require('css');
 
-module.exports = function({ node, csp, options }) {
-  const href = node.attrs.find(a => a.name === 'href');
+function addOrigin(link, c) {
+  const absolute = /^https?:\/\//i.test(link);
+  if (absolute) {
+    const origin = new URL(link).origin;
+    c.add(origin);
+  } else {
+    c.add(CSP.SELF);
+  }
+}
+
+module.exports = ({ node, csp, options }) => {
+  const href = node.attrs.find((a) => a.name === 'href');
   if (href) {
     addOrigin(href.value, csp.style);
   } else {
-    const text = node.childNodes.find(n => n.nodeName === '#text');
-    if (!text) return;
+    const text = node.childNodes.find((n) => n.nodeName === '#text');
+    if (!text)
+      return;
     const hash = crypto.createHash(options.hashType).update(text.value).digest('hex');
     csp.style.add(`'${options.hashType}-${hash}'`);
 
@@ -20,26 +31,16 @@ module.exports = function({ node, csp, options }) {
           addOrigin(rule.import.replace(/(url\(|\))/g, '').replace(/["']/g, ''), csp.style);
           break;
         case 'font-face': {
-          const src = rule.declarations.find(d => d.property === 'src');
-          if (!src) break;
-          for (const url of src.value.split('\n').map(x => x.trim())) {
+          const src = rule.declarations.find((d) => d.property === 'src');
+          if (!src)
+            break;
+          for (const url of src.value.split('\n').map((x) => x.trim()))
             addOrigin(url.replace(/(url\(|\))/g, '').replace(/["']/g, ''), csp.font);
-          }
           break;
         }
         default:
           break;
       }
-    }
-  }
-
-  function addOrigin(link, c) {
-    const absolute = /^https?:\/\//i.test(link);
-    if (absolute) {
-      const origin = new URL(link).origin;
-      c.add(origin);
-    } else {
-      c.add(CSP.SELF);
     }
   }
 };
