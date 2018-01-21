@@ -17,6 +17,7 @@ class WebpackCspPlugin {
       font: new Set(options.fonts || []),
       img: new Set(options.images || []),
       worker: new Set(options.workers || []),
+      object: new Set(options.objects || []),
     };
   }
 
